@@ -6,7 +6,7 @@ from langchain import HuggingFaceHub
 #This module provides a way to interact with the operating system, such as accessing environment variables, working with files
 #and directories, executing shell commands, etc
 import pypdf
-
+import os
 # An embedding is a vector (list) of floating point numbers. The distance between two vectors measures their relatedness. 
 # Small distances suggest high relatedness and large distances suggest low relatedness.
 # Generate Text Embedding using different LLM
