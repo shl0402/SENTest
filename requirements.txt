@@ -4,5 +4,5 @@ openai
 tiktoken
 python-dotenv
 faiss-cpu
-chromadb
+chromadb==0.3.29
 pypdf
