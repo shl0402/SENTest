@@ -3,5 +3,5 @@ streamlit
 openai
 tiktoken
 python-dotenv
-faiss-cpu
+lancedb
 pypdf
