@@ -17,7 +17,8 @@ from langchain.embeddings import OpenAIEmbeddings
 #FAISS is an open-source library developed by Facebook AI Research for efficient similarity search and 
 #clustering of large-scale datasets, particularly with high-dimensional vectors. 
 #It provides optimized indexing structures and algorithms for tasks like nearest neighbor search and recommendation systems.
-from langchain.vectorstores import FAISS
+from langchain.vectorstores import LanceDB
+import lancedb
 
 #By st.set_page_config(), you can customize the appearance of your Streamlit application's web page
 st.set_page_config(page_title="Advice Seeking", page_icon=":robot:")
@@ -71,7 +72,7 @@ docs = split_docs(documents)
 embeddings = OpenAIEmbeddings()
 
 #Store and Index vector space
-db = FAISS.from_documents(docs, embeddings)
+db = Lancedb.from_documents(docs, embeddings)
 
 # LLM Q&A Code
 from langchain.llms import OpenAI
