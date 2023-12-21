@@ -72,7 +72,19 @@ docs = split_docs(documents)
 embeddings = OpenAIEmbeddings()
 
 #Store and Index vector space
-db = Lancedb.from_documents(docs, embeddings)
+db = lancedb.connect("/tmp/lancedb")
+table = db.create_table(
+    "my_table",
+    data=[
+        {
+            "vector": embeddings.embed_query("vector"),
+            "text": "text",
+            "id": "1",
+        }
+    ],
+    mode="overwrite",
+)
+db = LanceDB.from_documents(docs, embeddings, connection = table)
 
 # LLM Q&A Code
 from langchain.llms import OpenAI
