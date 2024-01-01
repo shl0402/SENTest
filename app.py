@@ -101,6 +101,8 @@ def get_answer(query):
   response = chain.run(input_documents=relevant_docs, question=query)
   return response
 
+import time
+
 if "sessionMessages" not in st.session_state:
      st.session_state.sessionMessages = [
         SystemMessage(content=" It is wished we are helpful assistants.")
@@ -109,6 +111,10 @@ input_text = get_text()
 submit = st.button('Generate')  
 
 if submit:
+    start = time.time()
     response = get_answer(input_text)
-    st.subheader("Answer:")
+    end = time.time()
+    duration = end-start
+    st.subheader("FAISS Answer:")
     st.write(response,key= 1)
+    st.write(f"Time Used: {duration}", key= 2)
