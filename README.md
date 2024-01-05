@@ -12,7 +12,7 @@ license: mit
 
 Instructions (type in terminal)
 1. pip install -r requirements.txt
-2. echo "export HUGGINGFACEHUB_API_TOKEN='Your huggingface api key'" >> ~/.zsh
+2. echo "export HUGGINGHUB_API_KEY='Your huggingface api key'" >> ~/.zsh
 3. source ~/.zsh
 4. python -m streamlit run app.py
 
