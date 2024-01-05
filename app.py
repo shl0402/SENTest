@@ -47,7 +47,7 @@ def load_docspdf(directory):
 
 #Assigning the data inside the pdf to our variable here
 # Passing the directory to the 'load_docs' function
-directory = '/workspaces/SEN_New_LLM/data'
+directory = 'data'
 documents = load_docs(directory)
 
 len(documents)
