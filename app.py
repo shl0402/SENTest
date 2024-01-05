@@ -1,12 +1,12 @@
 #Streamlit, a framework for building interactive web applications.
 #It provides functions for creating UIs, displaying data, and handling user inputs.
 import streamlit as st
-from langchain import HuggingFaceHub
 
 #This module provides a way to interact with the operating system, such as accessing environment variables, working with files
 #and directories, executing shell commands, etc
-import pypdf
 import os
+os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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"
+
 # An embedding is a vector (list) of floating point numbers. The distance between two vectors measures their relatedness. 
 # Small distances suggest high relatedness and large distances suggest low relatedness.
 # Generate Text Embedding using different LLM
@@ -25,6 +25,7 @@ st.header("Good Morning... Sir/Madam, it is difficult to raise a child with spec
 
 #The below snippet helps us to import structured pdf file data for our tasks
 from langchain.document_loaders import PyPDFDirectoryLoader
+import pypdf
 
 def load_docs(directory):
     for filename in os.listdir(directory):
@@ -46,7 +47,7 @@ def load_docspdf(directory):
 
 #Assigning the data inside the pdf to our variable here
 # Passing the directory to the 'load_docs' function
-directory = 'data'
+directory = '/workspaces/SEN_New_LLM/data'
 documents = load_docs(directory)
 
 len(documents)
@@ -68,21 +69,31 @@ docs = split_docs(documents)
 #from langchain.embeddings import HuggingFaceEmbeddings, SentenceTransformerEmbeddings
 #embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
-embeddings = OpenAIEmbeddings()
+from langchain_community.embeddings import DashScopeEmbeddings
+embeddings = DashScopeEmbeddings(
+    model="text-embedding-v1", dashscope_api_key="your-dashscope-api-key"
+)
 
 #Store and Index vector space
 db = FAISS.from_documents(docs, embeddings)
 
+
 # LLM Q&A Code
-from langchain.llms import OpenAI
-from langchain.chains.question_answering import load_qa_chain
-from langchain.schema import (
-    AIMessage,
-    HumanMessage,
-    SystemMessage
+from langchain_community.llms import HuggingFaceHub
+from langchain.chains import LLMChain
+from langchain.prompts import PromptTemplate
+question = "What is ADHD?"
+template = """Question: {question}
+Answer: Let's think step by step."""
+prompt = PromptTemplate(template=template, input_variables=["question"])
+# llm = OpenAI()
+# chain = load_qa_chain(llm, chain_type="stuff")
+repo_id = "google/flan-t5-xxl"  # See https://huggingface.co/models?pipeline_tag=text-generation&sort=downloads for some other options
+llm = HuggingFaceHub(
+    repo_id=repo_id, model_kwargs={"temperature": 0.5, "max_length": 64}
 )
-llm = OpenAI()
-chain = load_qa_chain(llm, chain_type="stuff")
+llm_chain = LLMChain(prompt=prompt, llm=llm)
+
 
 # This function will transform the question that we raise into input text to search relevant docs
 def get_text():
@@ -98,17 +109,41 @@ def get_similiar_docs(query, k=2):
 def get_answer(query):
   relevant_docs = get_similiar_docs(query)
   print(relevant_docs)
-  response = chain.run(input_documents=relevant_docs, question=query)
+  response = llm_chain.run(input_documents=relevant_docs, question=query)
   return response
 
-if "sessionMessages" not in st.session_state:
-     st.session_state.sessionMessages = [
-        SystemMessage(content=" It is wished we are helpful assistants.")
-    ]
+# if "sessionMessages" not in st.session_state:
+#      st.session_state.sessionMessages = [
+#         SystemMessage(content=" It is wished we are helpful assistants.")
+#     ]
 input_text = get_text()
 submit = st.button('Generate')  
 
+import time
+
 if submit:
-    response = get_answer(input_text)
-    st.subheader("Answer:")
-    st.write(response,key= 1)
+    result = 0
+    queries = ["What is ADHD?","What are the symptoms of ADHD?", "How is ADHD diagnosed?","What causes ADHD?", "How is ADHD treated?"]
+    for query in queries:
+        query_start = time.time()
+        response = get_answer(query)
+        query_end = time.time()
+        duration = query_end-query_start
+        result += duration
+    print("_____")
+    print(result)
+    print("_____")
+    st.subheader("Time taken by DashScopeEmbeddings:")
+    st.write(result,key= 1)
+# if __name__ == '__main__':
+#     result = f"Vector Store Time: {vectorStoreTime}\n\n\n"
+#     queries = ["What is ADHD?","What are the symptoms of ADHD?", "How is ADHD diagnosed?","What causes ADHD?", "How is ADHD treated?"]
+#     for query in queries:
+#         query_start = time.time()
+#         response = get_answer(query)
+#         query_end = time.time()
+#         duration = query_end-query_start
+#         result += f"Q:{query}\n\nAns:{response}\n\nTime:{duration}\n\n\n"
+#     print("_____")
+#     print(result)
+#     print("_____")
