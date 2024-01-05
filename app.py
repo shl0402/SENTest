@@ -119,22 +119,10 @@ def get_answer(query):
 input_text = get_text()
 submit = st.button('Generate')  
 
-import time
-
 if submit:
-    result = 0
-    queries = ["What is ADHD?","What are the symptoms of ADHD?", "How is ADHD diagnosed?","What causes ADHD?", "How is ADHD treated?"]
-    for query in queries:
-        query_start = time.time()
-        response = get_answer(query)
-        query_end = time.time()
-        duration = query_end-query_start
-        result += duration
-    print("_____")
-    print(result)
-    print("_____")
-    st.subheader("Time taken by DashScopeEmbeddings:")
-    st.write(result,key= 1)
+    response = get_answer(input_text)
+    st.subheader("Answer:")
+    st.write(response,key= 1)
 # if __name__ == '__main__':
 #     result = f"Vector Store Time: {vectorStoreTime}\n\n\n"
 #     queries = ["What is ADHD?","What are the symptoms of ADHD?", "How is ADHD diagnosed?","What causes ADHD?", "How is ADHD treated?"]
