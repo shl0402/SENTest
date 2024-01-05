@@ -5,7 +5,6 @@ import streamlit as st
 #This module provides a way to interact with the operating system, such as accessing environment variables, working with files
 #and directories, executing shell commands, etc
 import os
-os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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"
 
 # An embedding is a vector (list) of floating point numbers. The distance between two vectors measures their relatedness. 
 # Small distances suggest high relatedness and large distances suggest low relatedness.
