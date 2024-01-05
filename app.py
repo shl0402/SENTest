@@ -69,10 +69,8 @@ docs = split_docs(documents)
 #from langchain.embeddings import HuggingFaceEmbeddings, SentenceTransformerEmbeddings
 #embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
-from langchain_community.embeddings import DashScopeEmbeddings
-embeddings = DashScopeEmbeddings(
-    model="text-embedding-v1", dashscope_api_key="your-dashscope-api-key"
-)
+from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
+embeddings = FastEmbedEmbeddings()
 
 #Store and Index vector space
 db = FAISS.from_documents(docs, embeddings)
@@ -80,6 +78,12 @@ db = FAISS.from_documents(docs, embeddings)
 
 # LLM Q&A Code
 from langchain_community.llms import HuggingFaceHub
+from langchain.chains.question_answering import load_qa_chain
+from langchain.schema import (
+    AIMessage,
+    HumanMessage,
+    SystemMessage
+)
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 question = "What is ADHD?"
@@ -112,10 +116,10 @@ def get_answer(query):
   response = llm_chain.run(input_documents=relevant_docs, question=query)
   return response
 
-# if "sessionMessages" not in st.session_state:
-#      st.session_state.sessionMessages = [
-#         SystemMessage(content=" It is wished we are helpful assistants.")
-#     ]
+if "sessionMessages" not in st.session_state:
+     st.session_state.sessionMessages = [
+        SystemMessage(content=" It is wished we are helpful assistants.")
+    ]
 input_text = get_text()
 submit = st.button('Generate')  
 
@@ -123,15 +127,3 @@ if submit:
     response = get_answer(input_text)
     st.subheader("Answer:")
     st.write(response,key= 1)
-# if __name__ == '__main__':
-#     result = f"Vector Store Time: {vectorStoreTime}\n\n\n"
-#     queries = ["What is ADHD?","What are the symptoms of ADHD?", "How is ADHD diagnosed?","What causes ADHD?", "How is ADHD treated?"]
-#     for query in queries:
-#         query_start = time.time()
-#         response = get_answer(query)
-#         query_end = time.time()
-#         duration = query_end-query_start
-#         result += f"Q:{query}\n\nAns:{response}\n\nTime:{duration}\n\n\n"
-#     print("_____")
-#     print(result)
-#     print("_____")
